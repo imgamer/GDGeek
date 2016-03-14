@@ -38,4 +38,4 @@ namespace GDGeek{
 		public TaskIsOver isOver = delegate(){return true;};
 		
 	};
-}
+}  

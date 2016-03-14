@@ -57,6 +57,10 @@ namespace GDGeek{
 		public Size size = null;
 		public Rgba rgba = null;
 
+		public Task arrangeTask(bool normal = false){
+			return new Task ();
+		
+		}
 		public void arrange(bool normal = false){
 
 
@@ -129,10 +133,7 @@ namespace GDGeek{
 
 			this.version = 150;
 
-
 			this.main.chunks = 52 + this.rgba.palette.Length *4 + this.datas.Count *4;
-
-
 		}
 	}
 

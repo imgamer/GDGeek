@@ -30,9 +30,7 @@ namespace GDGeek{
 		public void readIt(Packed packed){
 			for (int i = 0; i < packed.vs.datas.Count; ++i) {
 				dictionary_ [packed.vs.datas [i].pos +packed.offset ] = packed.vs.datas [i];
-
 			}
-
 
 		}
 		public List<VoxelData> getDatas(){
@@ -51,20 +49,11 @@ namespace GDGeek{
 			}
 			return datas;
 		}
-		/*
-		public VectorInt4[] getPalette(){
-			int size = Mathf.Max (palette_.Count, 256);
-			VectorInt4[] palette = new VectorInt4[size];
-			int i = 0;
-			foreach (Color c in palette_)
-			{
-				palette [i] = VoxelFormater.Color2Bytes (c);
-				++i;
-			}
-			return palette;
+		public Task doTask(){
+			Task task = new Task ();
+			return task;
+
 		}
-*/
-		//public 
 		public VoxelStruct doIt(){
 
 			this.clear ();
@@ -72,45 +61,8 @@ namespace GDGeek{
 				Packed p = this.list_ [i];
 				this.readIt(p);
 			}
-
 			VoxelStruct vs = new VoxelStruct();
-			/*
-			vs.main = new VoxelStruct.Main ();
-			vs.main.name = "MAIN";
-			vs.main.size = 0;
-
-
-			vs.size = new VoxelStruct.Size ();
-			vs.size.name = "SIZE";
-			vs.size.size = 12;
-			vs.size.chunks = 0;
-
-			vs.size.box = new VectorInt3 ();
-
-
-			vs.size.box.x = this.max_.x - this.min_.x +1;
-			vs.size.box.y = this.max_.y - this.min_.y +1;
-			vs.size.box.z = this.max_.z - this.min_.z +1;
-
-
-			vs.rgba = new VoxelStruct.Rgba ();//list_ [0].vs.rgba;
-			vs.rgba.palette = this.getPalette ();
-
-			vs.rgba.size = vs.rgba.palette.Length * 4;
-			vs.rgba.name = "RGBA";
-			vs.rgba.chunks = 0;
-
-			/**/
 			vs.datas = this.getDatas ();
-			vs.arrange (true);
-			/*
-			Debug.Log (vs.datas.Count);
-			vs.version = 150;
-
-
-			vs.main.chunks = 52 + vs.rgba.palette.Length *4 + vs.datas.Count *4;
-			Debug.Log (vs.main.chunks);
-			*/
 			return vs;
 
 		}
