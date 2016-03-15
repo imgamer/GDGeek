@@ -46,11 +46,9 @@ public class VoxelTest : MonoBehaviour {
 	}
 	private void  readFile(){
 		int tick = ConvertDateTimeInt(DateTime.Now);
-		FileStream sr2 = new FileStream ("fly2.vox", FileMode.OpenOrCreate, FileAccess.Read);
-
+		FileStream sr2 = new FileStream ("map.vox", FileMode.OpenOrCreate, FileAccess.Read);
 		System.IO.BinaryReader br2 = new System.IO.BinaryReader (sr2); 
-
-		vs = VoxelFormater.ReadFromMagicaVoxel (br2);
+		vs2 = VoxelFormater.ReadFromMagicaVoxel (br2);
 		sr2.Close ();
 		System.Diagnostics.StackTrace st = new System.Diagnostics.StackTrace();   
 
@@ -64,7 +62,7 @@ public class VoxelTest : MonoBehaviour {
 		System.DateTime startTime = TimeZone.CurrentTimeZone.ToLocalTime(new System.DateTime(1970, 1, 1));  
 		return (int)(time - startTime).Ticks;  
 	}  
-	private void joinIt(){
+	/*private void joinIt(){
 
 		int tick = ConvertDateTimeInt (DateTime.Now);
 		JoinVoxel splice = new JoinVoxel ();
@@ -78,7 +76,7 @@ public class VoxelTest : MonoBehaviour {
 
 		logIt("joinIt", ConvertDateTimeInt(DateTime.Now) - tick);
 	
-	}
+	}*/
 	private void arrange(){
 
 		int tick = ConvertDateTimeInt (DateTime.Now);
@@ -90,9 +88,10 @@ public class VoxelTest : MonoBehaviour {
 			Debug.Log (kv.Key + ":" + kv.Value / time * 100.0f + "%");
 		
 		}
+
 	}
 
-	VoxelStruct vs = null;
+	//VoxelStruct vs = null;
 	VoxelStruct vs2 = null;
 	Task readFileTask(){
 		Task task = new Task ();
@@ -101,35 +100,88 @@ public class VoxelTest : MonoBehaviour {
 		};
 		return task;
 	}
+	/*
 	Task joinItTask(){
 		Task task = new Task ();
 		task.init = delegate {
 			this.joinIt ();
 		};
 		return task;
-	}
+	}*/
 	private VoxelProduct product_ = null;
 	void create(){
+
 		int tick = ConvertDateTimeInt (DateTime.Now);
 		this._director.clear();//.arrange ();
 
 		product_ = new VoxelProduct();
-
-		VoxelData2Point vd2p = new VoxelData2Point(this.vs2.datas.ToArray());
+		VoxelData2Point vd2p = new VoxelData2Point();
+		vd2p.setup (this.vs2.datas.ToArray ());
 		vd2p.build(product_);
 
-		VoxelShadowBuild vsb = new VoxelShadowBuild ();
-		vsb.build(product_);
 
 
-		VoxelMeshBuild vmb = new VoxelMeshBuild ();
-		vmb.build(product_);
+
 
 
 
 
 
 		logIt("create", ConvertDateTimeInt(DateTime.Now) - tick);
+	}
+
+	Task shadow(){
+
+		int tick = 0;
+		Task task = new Task ();
+		task.init = delegate {
+			tick = ConvertDateTimeInt (DateTime.Now);
+			VoxelShadowBuild vsb = new VoxelShadowBuild ();
+			vsb.build(product_);
+
+
+
+		};
+		task.shutdown = delegate {
+
+			logIt("shadow", ConvertDateTimeInt(DateTime.Now) - tick);
+		};
+		return task ;
+	}
+
+
+	Task meshBuild(){
+
+		int tick = 0;
+		Task task = new Task ();
+		task.init = delegate {
+			tick = ConvertDateTimeInt (DateTime.Now);
+			VoxelMeshBuild vmb = new VoxelMeshBuild ();
+			vmb.build(product_);
+
+
+		};
+		task.shutdown = delegate {
+			logIt("meshBuild", ConvertDateTimeInt(DateTime.Now) - tick);
+		};
+		return task ;
+	}
+	Task subTask(){
+		int tick = 0;
+		Task task = new Task ();
+		task.init = delegate {
+			tick = ConvertDateTimeInt (DateTime.Now);
+			VoxelRemoveSameVertices vmb = new VoxelRemoveSameVertices ();
+			vmb.build(product_);
+
+
+		};
+		task.shutdown = delegate {
+
+			logIt("sub", ConvertDateTimeInt(DateTime.Now) - tick);
+		};
+		return task ;
+	
 	}
 	Task geoemtryTask(){
 		int tick = 0;
@@ -171,17 +223,28 @@ public class VoxelTest : MonoBehaviour {
 
 		TaskManager.PushFront (tl, delegate {
 			this.initMesh();
+			Debug.Log (DateTime.Now.Second);
 		});
 	
 		tl.push (readFileTask());
-		tl.push (joinItTask());
-		tl.push (arrangeTask ());
-		tl.push (createTask ());
+		//tl.push (joinItTask());
+		//tl.push (arrangeTask ());
+		/**/tl.push (new TaskPack(delegate {
+			return _director.task(vs2.datas.ToArray());
+		} ));
+		/*
+		 * tl.push (createTask ());
+		VoxelMeshBuild vmb = new VoxelMeshBuild ();
+		//vmb.build(product_);
+		tl.push (new TaskPack(delegate {return vmb.task(product_);}));
+		tl.push (subTask ());
 		tl.push (geoemtryTask ());
-
+*/
 		TaskManager.PushBack (tl, delegate {
 			print ("all", ConvertDateTimeInt (DateTime.Now) - tick);
+			Debug.Log (DateTime.Now.Second);
 		});
+		
 		TaskManager.Run (tl);
 
 	}

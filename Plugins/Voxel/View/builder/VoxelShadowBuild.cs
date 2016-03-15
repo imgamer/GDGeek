@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace GDGeek
 {
-	public class VoxelShadowBuild: VoxelBuilder
+	public class VoxelShadowBuild: IVoxelBuilder
 	{
 		private Dictionary<VectorInt3, VoxelHandler> voxels = null;
 		private void shadowTest(VoxelHandler handler, VectorInt3 shadow, VectorInt3 light, byte index, Vector3 face){
@@ -16,7 +16,14 @@ namespace GDGeek
 				handler.lightAdd (index, face);			
 			}
 		}
-		public override void build(VoxelProduct product){
+		public Task task(VoxelProduct product){
+			Task task = new Task ();
+			task.init = delegate {
+				build(product);
+			};
+			return task;
+		}
+		public void build(VoxelProduct product){
 			voxels = product.voxels;
 			foreach (KeyValuePair<VectorInt3, VoxelHandler> kv in voxels) {
 				kv.Value.lightShadowBegin ();

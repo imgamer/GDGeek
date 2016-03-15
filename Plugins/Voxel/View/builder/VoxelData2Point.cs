@@ -4,13 +4,14 @@ using System.Collections.Generic;
 
 namespace GDGeek
 {
-	public class VoxelData2Point : VoxelBuilder
+	public class VoxelData2Point : IVoxelBuilder
 	{
 		private VoxelData[] data_ = null;
-		public VoxelData2Point(VoxelData[] data){
+		public VoxelData2Point(){
+		}
+		public void setup(VoxelData[] data){
 			data_ = data;
 		}
-
 
 		private VoxelHandler data2Handler (VoxelData data)
 		{
@@ -24,7 +25,14 @@ namespace GDGeek
 			return handler;
 
 		}
-		public override void build(VoxelProduct product){
+		public Task task(VoxelProduct product){
+			Task task = new Task ();
+			task.init = delegate {
+				build(product);
+			};
+			return task;
+		}
+		public void build(VoxelProduct product){
 			
 			product.min = new Vector3(999, 999, 999);
 			product.max = new Vector3(-999, -999, -999);

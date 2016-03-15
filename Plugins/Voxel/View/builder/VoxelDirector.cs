@@ -11,8 +11,8 @@ namespace GDGeek{
 		public VoxelGeometry _geometry;
 		public VoxelProduct _product;
 
-
-
+		private VoxelData2Point begin_ = new VoxelData2Point();
+		public List<IVoxelBuilder> list_ = new List<IVoxelBuilder> ();
 
 
 		public void setLayer (int layer)
@@ -22,7 +22,10 @@ namespace GDGeek{
 
 		}
 
-
+		public void Start(){
+			list_.Add (new VoxelMeshBuild());
+			list_.Add (new VoxelRemoveSameVertices());
+		}
 		public Dictionary<VectorInt3, VoxelHandler> voxels{
 			get{
 				
@@ -37,25 +40,54 @@ namespace GDGeek{
 				return this._geometry == null;
 			}
 		}
+		//public List
+		public Task task(VoxelData[] datas){
+			if (empty) {
+				Debug.Log("what");
+				if (this._product == null) {
+					this._product = new VoxelProduct ();
+				}
+				begin_.setup (datas);
 
+				TaskList tl = new TaskList ();
+
+
+				tl.push(begin_.task (this._product));
+				for (int i = 0; i < list_.Count; ++i) {
+					tl.push(list_[i].task (this._product));
+				}
+
+				TaskManager.PushBack (tl, delegate {
+					Debug.Log("!!!!!!!" + this._product.draw.vertices.Count);
+					_geometry = new VoxelGeometry ();
+					_geometry.draw (this._product, this.gameObject, this._material);
+				});
+				return tl;
+
+			} else {
+				return new Task ();
+			}
+		
+		}
 		public void build (VoxelData[] datas)
 		{
 			if (empty) {
 
 				this._product = new VoxelProduct();
 
-				VoxelData2Point vd2p = new VoxelData2Point(datas);
+				VoxelData2Point vd2p = new VoxelData2Point();
+				vd2p.setup (datas);
 				vd2p.build(this._product);
 
-				VoxelShadowBuild vsb = new VoxelShadowBuild ();
-				vsb.build(this._product);
+				//VoxelShadowBuild vsb = new VoxelShadowBuild ();
+				//vsb.build(this._product);
 
 
 				VoxelMeshBuild vmb = new VoxelMeshBuild ();
 				vmb.build(this._product);
 
-				//VoxelRemoveSameVertices rsv = new VoxelRemoveSameVertices ();
-				//rsv.build(this._product);
+				VoxelRemoveSameVertices rsv = new VoxelRemoveSameVertices ();
+				rsv.build(this._product);
 
 				//VoxelRemoveFace vrf = new VoxelRemoveFace ();
 				//vrf.build(this._product);

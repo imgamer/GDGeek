@@ -12,6 +12,8 @@ namespace GDGeek
 
 		private Mesh createMesh(VoxelProduct product)
 		{
+
+			Debug.Log ("=============");
 			Mesh m = new Mesh();
 			m.name = "ScriptedMesh";
 
@@ -43,8 +45,7 @@ namespace GDGeek
 		public void draw(VoxelProduct product, GameObject gameObject, Material material){
 
 			this._mesh = this.crateMeshFilter (product, "VoxelMesh", material);
-
-			//_mesh.gameObject.transform.SetParent (transform);		
+	
 
 			this._mesh.gameObject.transform.SetParent (gameObject.transform);	
 			this._mesh.gameObject.transform.localPosition = Vector3.zero;

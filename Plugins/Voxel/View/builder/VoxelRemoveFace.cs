@@ -4,9 +4,17 @@ using System.Collections.Generic;
 
 namespace GDGeek
 {
-	class VoxelRemoveFace: VoxelBuilder
+	class VoxelRemoveFace: IVoxelBuilder
 	{
-		public override void build(VoxelProduct product){
+
+		public Task task(VoxelProduct product){
+			Task task = new Task ();
+			task.init = delegate {
+				build(product);
+			};
+			return task;
+		}
+		public void build(VoxelProduct product){
 
 
 		}
