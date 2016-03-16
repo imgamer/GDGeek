@@ -18,10 +18,6 @@ namespace GDGeek{
 				makers [i]._loader.read ();
 				Debug.Log (offset);
 				join.addVoxel (makers [i]._model.vs, new VectorInt3((int)offset.x,  (int)offset.z, (int)offset.y));
-				//makers [i]._loader.read ();
-				//					Debug.Log (makers [i]._model.data.Length);
-				//_file.addFile (makers [i]._model, );
-				//					Debug.Log (offset);
 			}
 			VoxelStruct vs = join.doIt ();
 			return vs;
