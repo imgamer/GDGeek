@@ -6,7 +6,12 @@ namespace GDGeek
 {
 	public class VoxelRemoveSameVertices : IVoxelBuilder
 	{
+		
 		private VoxelDrawData draw_ = null;
+
+		public void init(){
+			draw_ = null;
+		}
 		private struct Pack
 		{
 			public int index;

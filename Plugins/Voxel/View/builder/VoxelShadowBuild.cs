@@ -8,6 +8,10 @@ namespace GDGeek
 	public class VoxelShadowBuild: IVoxelBuilder
 	{
 		private Dictionary<VectorInt3, VoxelHandler> voxels = null;
+
+		public void init(){
+			voxels = null;
+		}
 		private void shadowTest(VoxelHandler handler, VectorInt3 shadow, VectorInt3 light, byte index, Vector3 face){
 			
 			if (voxels.ContainsKey (handler.position + shadow)) {

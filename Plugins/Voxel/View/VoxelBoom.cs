@@ -1,8 +1,13 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class VoxelModel_ : MonoBehaviour {
+public class VoxelBoom : MonoBehaviour {
 
+	void Awake(){
+
+
+
+	}
 	// Use this for initialization
 	void Start () {
 	

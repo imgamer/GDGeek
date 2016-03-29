@@ -8,173 +8,90 @@ namespace GDGeek{
 
 
 		public Material _material = null;
-		public VoxelGeometry _geometry;
-		public VoxelProduct _product;
-
 		private VoxelData2Point begin_ = new VoxelData2Point();
 		public List<IVoxelBuilder> list_ = new List<IVoxelBuilder> ();
 
-
-		public void setLayer (int layer)
-		{
-			this.gameObject.layer = layer;
-			this._geometry._mesh.gameObject.layer = layer;
-
-		}
-
-		public void Start(){
+	
+		public void init(){
 			list_.Add (new VoxelMeshBuild());
 			list_.Add (new VoxelRemoveSameVertices());
+			list_.Add (new VoxelRemoveFace());
 		}
-		public Dictionary<VectorInt3, VoxelHandler> voxels{
-			get{
-				
-				return _product.voxels;
+		public void Awake(){
+
+			init ();
+
+		}
+		public delegate void GeometryResult(VoxelGeometry geometry);
+
+		private Task task_(string name, VoxelData[] datas, GeometryResult cb){
+			if (list_.Count == 0) {
+				init ();
 			}
-		}
+
+			VoxelProduct product = new VoxelProduct ();
+
+			begin_.setup (datas);
+
+			TaskList tl = new TaskList ();
 
 
+			tl.push(begin_.task (product));
+			for (int i = 0; i < list_.Count; ++i) {
 
-		public bool empty{
-			get{
-				return this._geometry == null;
+				tl.push(list_[i].task (product));
 			}
+
+			TaskManager.PushBack (tl, delegate {
+				VoxelGeometry geometry = new VoxelGeometry ();
+				geometry.draw (name, product, this.gameObject, this._material);;
+				cb(geometry);
+			});
+			return tl;
+
+
+
 		}
+
+
 		//public List
-		public Task task(VoxelData[] datas){
-			if (empty) {
-				Debug.Log("what");
-				if (this._product == null) {
-					this._product = new VoxelProduct ();
-				}
-				begin_.setup (datas);
+		public Task task(string name, VoxelData[] datas, GeometryResult cb){
 
-				TaskList tl = new TaskList ();
+			Task task = new TaskPack (delegate {
+				return 	task_(name, datas, cb);
+			});
 
+			return task;
+		}
 
-				tl.push(begin_.task (this._product));
-				for (int i = 0; i < list_.Count; ++i) {
-					tl.push(list_[i].task (this._product));
-				}
+		public VoxelGeometry build (VoxelData[] datas, GameObject obj = null)
+		{
 
-				TaskManager.PushBack (tl, delegate {
-					Debug.Log("!!!!!!!" + this._product.draw.vertices.Count);
-					_geometry = new VoxelGeometry ();
-					_geometry.draw (this._product, this.gameObject, this._material);
-				});
-				return tl;
-
-			} else {
-				return new Task ();
+			if (obj == null) {
+				obj = this.gameObject;
 			}
+
+			VoxelProduct product = new VoxelProduct();
+			begin_.init ();
+			begin_.setup (datas);
+			begin_.build(product);
+
 		
-		}
-		public void build (VoxelData[] datas)
-		{
-			if (empty) {
-
-				this._product = new VoxelProduct();
-
-				VoxelData2Point vd2p = new VoxelData2Point();
-				vd2p.setup (datas);
-				vd2p.build(this._product);
-
-				//VoxelShadowBuild vsb = new VoxelShadowBuild ();
-				//vsb.build(this._product);
-
-
-				VoxelMeshBuild vmb = new VoxelMeshBuild ();
-				vmb.build(this._product);
-
-				VoxelRemoveSameVertices rsv = new VoxelRemoveSameVertices ();
-				rsv.build(this._product);
-
-				//VoxelRemoveFace vrf = new VoxelRemoveFace ();
-				//vrf.build(this._product);
-
-				/*
-				VoxelRemoveFace vrf = new VoxelRemoveFace ();
-				vrf.build(this._product);
-				*/
-
-				_geometry = new VoxelGeometry();
-				_geometry.draw (this._product, this.gameObject, this._material);
-			}
-
-		}
-
-
-		public void clear ()
-		{
-
-			if (!empty) {
-
-				if(_product.voxels != null){
-					_product.voxels.Clear();
-				}
-				this.clearMesh ();
-			}
-		}
-
-
-
-		public Vector3 min{
-			get{
-				return this._product.min;
-			}
-		}
-		public Vector3 max{
-			get{
-				return this._product.max;
-			}
-		}
-
-		public void showMesh ()
-		{
-			this._geometry._mesh.gameObject.SetActive (true);
-			//refersh ();
-
-		}
-		/*private void refersh(){
-			Vector3 offset = Vector3.zero;
-			Vector3 size =  new Vector3 (this._product.max.x - this._product.min.x, this._product.max.z - this._product.min.z, this._product.max.y - this._product.min.y);
-
-			Debug.Log ("offset" + offset);
-
-			this._geometry._mesh.transform.localPosition = offset;
-
-			if (_geometry._collider == null) {
-				_geometry._collider = this.gameObject.GetComponent <BoxCollider>();
+			for (int i = 0; i < list_.Count; ++i) {
+				list_ [i].init ();
+				list_[i].build (product);
 			}
 
 
-			if (_geometry._collider == null) {
-				_geometry._collider = this.gameObject.AddComponent <BoxCollider>();
-			}
-			_geometry._collider.size = size + Vector3.one;//new Vector3 (max_.x - min_.x + 1, max_.z - min_.z + 1, max_.y - min_.y + 1);
+
+
+			VoxelGeometry geometry = new VoxelGeometry();
+			geometry.draw ("Mesh", product, obj, this._material);
+			return geometry;
+
 		}
+
 	
-*/
-		public void setLightColor(Color color){
-			Renderer renderer = this._geometry._mesh.GetComponent<Renderer> ();
-			renderer.material.SetColor("_LightColor", color);
-		}
-		public void setMainColor(Color color){
-			Renderer renderer = this._geometry._mesh.GetComponent<Renderer> ();
-			renderer.material.SetColor("_MainColor", color);
-		}
-		public void clearMesh(){
-
-
-			if (this._geometry._mesh) {
-				GameObject.DestroyImmediate (this._geometry._mesh.gameObject);
-			}
-			this._geometry._mesh = null;
-
-		}
-
-
-
 
 	}
 

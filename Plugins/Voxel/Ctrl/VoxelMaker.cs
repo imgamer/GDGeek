@@ -59,17 +59,18 @@ namespace GDGeek{
 				initModel();
 				initLoader();
 				initMesh();
-				if(!_director.empty){
+/*				if(!_director.empty){
 					_director.clear ();
 				}	
 
-
+*/
 				_loader.read();
 
-				if(_director.empty){
+				//if(_director.empty){
+				_director.init();
 					_director.build (_model.data);
 				
-				}	
+			//	}	
 
 
 				_building = false;	

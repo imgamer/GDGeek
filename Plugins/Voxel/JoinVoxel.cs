@@ -1,5 +1,5 @@
 using UnityEngine;
-using UnityEditor;
+//using UnityEditor;
 using GDGeek;
 using System.IO;
 using System.Collections.Generic;
@@ -18,7 +18,6 @@ namespace GDGeek{
 		private List<Packed> list_ = new List<Packed>();
 
 		public void addVoxel(VoxelStruct vs, VectorInt3 offset){
-//			Debug.Log (offset.x +","+ offset.y+","+ offset.z);
 			Packed packed = new Packed ();
 			packed.vs = vs;
 			packed.offset = offset;

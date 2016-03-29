@@ -4,15 +4,39 @@ using System.Collections.Generic;
 
 
 namespace GDGeek{
-	public class VoxelPool : MonoBehaviour {
+	public class VoxelPool_ : MonoBehaviour {
 		public delegate void DoAction(VoxelPoolObject obj);
-		public int _reserve = 0;
+		public int _reserve = -1;
 		public event DoAction doEnable;
 		public event DoAction doDisable;
+		public static VoxelPool_ inctance_ = null;
+		public static VoxelPool_ GetInstance(){
+			if (inctance_ == null) {
+				inctance_ = Component.FindObjectOfType<VoxelPool_> ();
+				if (inctance_ == null) {
+					GameObject obj = new GameObject ();
+					obj.name = "VoxelPool";
+					inctance_ = obj.AddComponent<VoxelPool_> ();
+				}
+			}
+			return inctance_;
 
+		}
 		public VoxelPoolObject _prototype = null;
 		private Stack<VoxelPoolObject> _pool = new Stack<VoxelPoolObject>();
-		public void Awake(){
+		public void init(){
+			if (_prototype == null) {
+				GameObject cube = GameObject.CreatePrimitive (PrimitiveType.Cube);
+				cube.transform.parent = this.transform;
+				_prototype = cube.AddComponent<VoxelPoolObject> ();
+
+				//Renderer renderer = cube.GetComponent<Renderer> ();
+				//renderer.material = material;
+			}
+			if (_reserve == -1) {
+				_reserve = 10;
+			}
+
 			_prototype.gameObject.SetActive (false);
 			VoxelPoolObject[] list = new VoxelPoolObject[_reserve];
 			for (int i =0; i <_reserve; ++i) {
@@ -23,6 +47,10 @@ namespace GDGeek{
 				list[i].gameObject.SetActive(false);		
 			}
 
+		}
+		public void Awake(){
+			init ();
+		
 		}
 		public VoxelPoolObject create(){
 			VoxelPoolObject obj = null;
@@ -52,5 +80,6 @@ namespace GDGeek{
 		public void destory(VoxelPoolObject obj){
 			_pool.Push (obj);
 		}
+
 	}
 }

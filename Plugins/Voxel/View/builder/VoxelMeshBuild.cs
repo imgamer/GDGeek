@@ -6,6 +6,10 @@ namespace GDGeek
 {
 	public class VoxelMeshBuild : IVoxelBuilder
 	{
+
+		public void init (){
+
+		}
 		private VoxelProduct product_ = null;
 		private void addVertix (Vector3 p, Color c, Vector3 normal){
 			VoxelDrawData.Vertice v = new VoxelDrawData.Vertice ();
@@ -86,10 +90,11 @@ namespace GDGeek
 			});
 		}
 		private Task _task(VoxelProduct product){
-			
+//			Debug.Log ("****************");
 
 			TaskList tl = new TaskList ();
 			TaskManager.PushFront (tl, delegate {
+				//Debug.Log("!!!!!!");
 				this.product_ = product;
 				product_.draw = new VoxelDrawData ();
 			});
@@ -111,7 +116,7 @@ namespace GDGeek
 			return task;
 		}
 		private void build(int from, int to, Dictionary<VectorInt3, VoxelHandler> voxs){
-			Debug.Log ("from:" + from + ", to" + to);
+//			Debug.Log ("from:" + from + ", to" + to);
 			List<VectorInt3> keys = new List<VectorInt3> (voxs.Keys); 
 			for (int i = from; i < to; ++i) {
 				VectorInt3 key = keys [i];
@@ -159,7 +164,6 @@ namespace GDGeek
 			for (int i = 0; i < product.voxels.Count; i+=1000) {
 				build (i, Mathf.Min(i + 1000, product.voxels.Count), product.voxels);
 			}
-
 		}
 	}
 

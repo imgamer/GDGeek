@@ -112,7 +112,7 @@ public class VoxelTest : MonoBehaviour {
 	void create(){
 
 		int tick = ConvertDateTimeInt (DateTime.Now);
-		this._director.clear();//.arrange ();
+//		this._director.clear();//.arrange ();
 
 		product_ = new VoxelProduct();
 		VoxelData2Point vd2p = new VoxelData2Point();
@@ -188,8 +188,8 @@ public class VoxelTest : MonoBehaviour {
 		Task task = new Task ();
 		task.init = delegate {
 			tick = ConvertDateTimeInt (DateTime.Now);
-			this._director._geometry = new VoxelGeometry();
-			this._director._geometry.draw (product_, this.gameObject, this._director._material);
+		//	this._director._geometry = new VoxelGeometry();
+		//	this._director._geometry.draw (product_, this.gameObject, this._director._material);
 
 
 		};
@@ -229,7 +229,7 @@ public class VoxelTest : MonoBehaviour {
 		tl.push (readFileTask());
 		//tl.push (joinItTask());
 		//tl.push (arrangeTask ());
-		/**/tl.push (new TaskPack(delegate {
+		/*tl.push (new TaskPack(delegate {
 			return _director.task(vs2.datas.ToArray());
 		} ));
 		/*

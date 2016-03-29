@@ -6,6 +6,9 @@ namespace GDGeek{
 	public class VoxelGroups : IVoxelBuilder {
 
 
+		public void init (){
+			
+		}
 		public class Point{
 			//public Vector3 position;
 			public HashSet<Point> link = new HashSet<Point>();

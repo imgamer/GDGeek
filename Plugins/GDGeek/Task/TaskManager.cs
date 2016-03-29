@@ -97,9 +97,12 @@ namespace GDGeek{
 		}
 	
 		public static void Run(Task task){
-			if(TaskManager.GetInstance() != null){
-				TaskManager.GetInstance().runner.addTask(task);
+			if(TaskManager.GetInstance() == null){
+				GameObject obj = new GameObject ();
+				obj.name = "TaskManager";
+				instance_ = obj.AddComponent<TaskManager> ();
 			}
+			TaskManager.GetInstance().runner.addTask(task);
 		}
 
 		public static void PushFront(Task task, TaskInit func){

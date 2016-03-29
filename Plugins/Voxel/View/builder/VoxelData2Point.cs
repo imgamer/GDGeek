@@ -7,6 +7,10 @@ namespace GDGeek
 	public class VoxelData2Point : IVoxelBuilder
 	{
 		private VoxelData[] data_ = null;
+		public void init(){
+			data_ = null;
+		
+		}
 		public VoxelData2Point(){
 		}
 		public void setup(VoxelData[] data){
@@ -33,10 +37,12 @@ namespace GDGeek
 			return task;
 		}
 		public void build(VoxelProduct product){
-			
+
 			product.min = new Vector3(999, 999, 999);
 			product.max = new Vector3(-999, -999, -999);
 			product.voxels = new Dictionary<VectorInt3, VoxelHandler>();
+
+//			Debug.Log (product.voxels.Count);
 			for (int i=0; i<data_.Length; ++i) {
 				VoxelData d = data_ [i];
 				product.min.x = Mathf.Min (product.min.x, d.pos.x);
@@ -50,6 +56,10 @@ namespace GDGeek
 			for (int i=0; i<data_.Length; ++i) {
 
 				VoxelHandler handler = data2Handler(data_[i]);
+				if (product.voxels.ContainsKey (handler.position)) {
+					Debug.Log (data_.Length);
+					Debug.Log(handler.position.x + ":" + handler.position.y +":"+ handler.position.z);
+				}
 				product.voxels.Add (handler.position, handler);	
 
 			}

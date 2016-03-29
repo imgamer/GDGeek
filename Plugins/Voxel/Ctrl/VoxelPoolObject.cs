@@ -9,7 +9,6 @@ namespace GDGeek{
 
 
 		public void OnDisable(){
-//			Debug.Log ("on disable");
 			if (doDisable != null) {
 				doDisable(this);			
 			}
@@ -17,8 +16,7 @@ namespace GDGeek{
 
 		public void OnEnable(){
 
-			
-		//	Debug.Log ("on enabled");
+
 			if (doEnable != null) {
 				doEnable(this);			
 			}

@@ -5,7 +5,7 @@ namespace GDGeek{
 
 		void build(VoxelProduct product);
 		Task task(VoxelProduct product);
-
+		void init ();
 		//public abstract Task task (VoxelProduct product);
 	}
 }
